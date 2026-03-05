@@ -65,3 +65,27 @@ El proyecto se puede desplegar como **una sola app**: el servidor Express sirve 
 | Webhook WhatsApp | `https://TU_DOMINIO/webhook/whatsapp/twilio` |
 
 Si algo no anda, revisá los logs del servicio en Railway o Render; ahí aparecen errores de API keys o Twilio.
+
+---
+
+## Hostinger (Apps / Hosting de aplicaciones)
+
+1. **Conectar GitHub:** En el panel de Hostinger → Tu app → Conectar repositorio `lucasdi24/agent-ai-eaam`, rama `main`.
+
+2. **Configuración de compilación:**
+   - **Directorio raíz:** `./` (o vacío).
+   - **Comando de build:** `npm install && npm run build`
+   - **Comando de inicio (Start):** `npm start`
+   - **Versión de Node:** 18.x o 22.x (el proyecto usa `engines.node >= 18`).
+
+3. **Variables de entorno:** En la app en Hostinger, agregá todas las del `.env`:
+   - `GEMINI_API_KEY` o `OPENAI_API_KEY` (al menos uno)
+   - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM` (si usás WhatsApp)
+   - No hace falta `PORT`; Hostinger suele inyectarlo.
+
+4. Si el deploy marca **“Falló la compilación”** pero en los logs el build de Vite termina bien (`✓ built in ...`), el fallo suele ser **después del build** (al arrancar la app). Revisá:
+   - Que el **comando de inicio** sea exactamente `npm start`.
+   - Que las **variables de entorno** estén cargadas (sin ellas el servidor puede arrancar igual, pero conviene tener al menos `GEMINI_API_KEY` u `OPENAI_API_KEY`).
+   - En los logs, si hay más líneas después del build, buscá errores de Node o “Cannot find module”.
+
+5. **Procfile:** El repo incluye `Procfile` con `web: npm start` por si la plataforma lo usa para saber cómo ejecutar la app.

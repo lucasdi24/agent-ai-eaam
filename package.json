@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Agente AI para EAAM - Escuela Andaluza de Alta Montaña (FADMES)",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "node server/index.js",
