@@ -117,30 +117,30 @@ app.get("/chat/history", (req, res) => {
 
 registerTwilioWebhook(app);
 
-// Panel de supervisión: ver conversaciones y tomar control (responder como humano)
+// Panel de supervisión: API bajo /api/admin para no chocar con express.static("/admin")
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-app.get("/admin/conversations", (_, res) => {
+app.get("/api/admin/conversations", (_, res) => {
   res.json(listConversations());
 });
 
-app.get("/admin/leads", (_, res) => {
+app.get("/api/admin/leads", (_, res) => {
   try {
     const leads = getLeads();
     res.json(Array.isArray(leads) ? leads : []);
   } catch (err) {
-    console.error("GET /admin/leads error:", err.message);
+    console.error("GET /api/admin/leads error:", err.message);
     res.json([]);
   }
 });
 
-app.get("/admin/conversations/:sessionId", (req, res) => {
+app.get("/api/admin/conversations/:sessionId", (req, res) => {
   const conv = getConversation(req.params.sessionId);
   if (!conv) return res.status(404).json({ error: "Conversación no encontrada" });
   res.json(conv);
 });
 
-app.post("/admin/conversations/:sessionId/reply", async (req, res) => {
+app.post("/api/admin/conversations/:sessionId/reply", async (req, res) => {
   try {
     const { sessionId } = req.params;
     const message = req.body?.message ?? req.body?.text ?? "";
@@ -153,12 +153,12 @@ app.post("/admin/conversations/:sessionId/reply", async (req, res) => {
     }
     res.json({ ok: true, content: result.content });
   } catch (err) {
-    console.error("POST /admin/conversations/:sessionId/reply error:", err.message);
+    console.error("POST /api/admin/conversations/:sessionId/reply error:", err.message);
     res.status(500).json({ ok: false, error: err.message || "Error del servidor" });
   }
 });
 
-app.post("/admin/conversations/:sessionId/handoff", (req, res) => {
+app.post("/api/admin/conversations/:sessionId/handoff", (req, res) => {
   try {
     const { sessionId } = req.params;
     const handoff = !!req.body?.handoff;
@@ -166,12 +166,12 @@ app.post("/admin/conversations/:sessionId/handoff", (req, res) => {
     if (!ok) return res.status(404).json({ error: "Sesión no encontrada" });
     res.json({ ok: true, handoff });
   } catch (err) {
-    console.error("POST /admin/conversations/:sessionId/handoff error:", err.message);
+    console.error("POST /api/admin/conversations/:sessionId/handoff error:", err.message);
     res.status(500).json({ ok: false, error: err.message || "Error del servidor" });
   }
 });
 
-app.post("/admin/conversations/:sessionId/category", (req, res) => {
+app.post("/api/admin/conversations/:sessionId/category", (req, res) => {
   try {
     const { sessionId } = req.params;
     const category = req.body?.category ?? "";
@@ -179,12 +179,12 @@ app.post("/admin/conversations/:sessionId/category", (req, res) => {
     if (!ok) return res.status(404).json({ error: "Sesión no encontrada" });
     res.json({ ok: true, category: typeof category === "string" ? category.trim() : "" });
   } catch (err) {
-    console.error("POST /admin/conversations/:sessionId/category error:", err.message);
+    console.error("POST /api/admin/conversations/:sessionId/category error:", err.message);
     res.status(500).json({ ok: false, error: err.message || "Error del servidor" });
   }
 });
 
-app.post("/admin/conversations/:sessionId/state", (req, res) => {
+app.post("/api/admin/conversations/:sessionId/state", (req, res) => {
   try {
     const { sessionId } = req.params;
     const state = req.body?.state ?? "Nuevo";
@@ -192,7 +192,7 @@ app.post("/admin/conversations/:sessionId/state", (req, res) => {
     if (!ok) return res.status(404).json({ error: "Sesión no encontrada" });
     res.json({ ok: true, state: typeof state === "string" ? state.trim() : "Nuevo" });
   } catch (err) {
-    console.error("POST /admin/conversations/:sessionId/state error:", err.message);
+    console.error("POST /api/admin/conversations/:sessionId/state error:", err.message);
     res.status(500).json({ ok: false, error: err.message || "Error del servidor" });
   }
 });

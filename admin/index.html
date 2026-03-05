@@ -728,7 +728,7 @@
         loadLeads();
       });
       function loadLeads() {
-        fetch(API_BASE + "/admin/leads").then(r => r.json()).then(leads => {
+        fetch(API_BASE + "/api/admin/leads").then(r => r.json()).then(leads => {
           leadsTbody.innerHTML = "";
           if (!leads || !leads.length) {
             leadsTbody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:1.5rem;">Aún no hay leads.</td></tr>';
@@ -820,7 +820,7 @@
       }
       async function loadList() {
         try {
-          const r = await fetch(API_BASE + "/admin/conversations"); if (!r.ok) throw new Error(r.status);
+          const r = await fetch(API_BASE + "/api/admin/conversations"); if (!r.ok) throw new Error(r.status);
           let list = await r.json();
           const filterCat = ($("filterCategory") && $("filterCategory").value) || "";
           const filterState = ($("filterState") && $("filterState").value) || "";
@@ -848,7 +848,7 @@
         detailSessionId.textContent = sessionId;
         const catSelect = $("detailCategory");
         try {
-          const r = await fetch(API_BASE + "/admin/conversations/" + encodeURIComponent(sessionId)); if (!r.ok) throw new Error("No encontrada");
+          const r = await fetch(API_BASE + "/api/admin/conversations/" + encodeURIComponent(sessionId)); if (!r.ok) throw new Error("No encontrada");
           const conv = await r.json();
           detailChannel.textContent = conv.channel === "wa" ? "WhatsApp" : "Web";
           detailChannel.className = "channel-badge " + conv.channel;
@@ -871,7 +871,7 @@
         const state = this.value || "Nuevo";
         const prev = this.dataset.prev || "";
         try {
-          const d = await apiPost("/admin/conversations/" + encodeURIComponent(selectedId) + "/state", { state });
+          const d = await apiPost("/api/admin/conversations/" + encodeURIComponent(selectedId) + "/state", { state });
           if (d.ok) { this.dataset.prev = state; loadList(); }
           else { showError(replyError, d.error || "No se pudo guardar el estado"); this.value = prev; }
         } catch (e) {
@@ -884,7 +884,7 @@
         const category = this.value || "";
         const prev = this.dataset.prev || "";
         try {
-          const d = await apiPost("/admin/conversations/" + encodeURIComponent(selectedId) + "/category", { category });
+          const d = await apiPost("/api/admin/conversations/" + encodeURIComponent(selectedId) + "/category", { category });
           if (d.ok) { this.dataset.prev = category; loadList(); }
           else { showError(replyError, d.error || "No se pudo guardar la categoría"); this.value = prev; }
         } catch (e) {
@@ -898,14 +898,19 @@
         const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
         const text = await r.text();
         let d;
-        try { d = JSON.parse(text); } catch (_) { throw new Error(r.ok ? "Respuesta inválida" : "Error del servidor (" + r.status + "). Comprobá que el backend esté en marcha en " + API_BASE); }
+        try { d = JSON.parse(text); } catch (_) {
+          const msg = r.ok ? "Respuesta inválida" : ("Error del servidor (" + r.status + "). " + (r.status === 404 ? "¿El backend está en marcha en " + (API_BASE || window.location.origin) + "?" : "Comprobá que el backend esté en marcha."));
+          throw new Error(msg);
+        }
+        if (!r.ok && d && d.error) throw new Error(d.error);
+        if (!r.ok) throw new Error("Error del servidor (" + r.status + ")");
         return d;
       }
       btnHandoff.addEventListener("click", async () => {
         if (!selectedId) return;
         showError(replyError, "");
         try {
-          const d = await apiPost("/admin/conversations/" + encodeURIComponent(selectedId) + "/handoff", { handoff: true });
+          const d = await apiPost("/api/admin/conversations/" + encodeURIComponent(selectedId) + "/handoff", { handoff: true });
           if (d.ok) selectConversation(selectedId);
           else showError(replyError, d.error || "Error");
         } catch (e) { showError(replyError, e.message === "Failed to fetch" ? "No se pudo conectar con el servidor. ¿Está corriendo en " + API_BASE + "?" : e.message); }
@@ -914,7 +919,7 @@
         if (!selectedId) return;
         showError(replyError, "");
         try {
-          const d = await apiPost("/admin/conversations/" + encodeURIComponent(selectedId) + "/handoff", { handoff: false });
+          const d = await apiPost("/api/admin/conversations/" + encodeURIComponent(selectedId) + "/handoff", { handoff: false });
           if (d.ok) selectConversation(selectedId);
           else showError(replyError, d.error || "Error");
         } catch (e) { showError(replyError, e.message === "Failed to fetch" ? "No se pudo conectar con el servidor. ¿Está corriendo en " + API_BASE + "?" : e.message); }
@@ -927,7 +932,7 @@
         const text = replyText.value.trim();
         if (!text) return;
         try {
-          const d = await apiPost("/admin/conversations/" + encodeURIComponent(selectedId) + "/reply", { message: text });
+          const d = await apiPost("/api/admin/conversations/" + encodeURIComponent(selectedId) + "/reply", { message: text });
           if (d.error) { showError(replyError, d.error); return; }
           replyText.value = "";
           selectConversation(selectedId);
