@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EAAM – Asistente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/main.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header header--with-nav">
+        <a href="#" class="logo" id="navLogo">
+          <img src="/logo-eaam.png" alt="EAAM" class="logo-img" />
+          <span class="header-title">Asistente EAAM</span>
+        </a>
+        <nav class="nav-menu" aria-label="Principal">
+          <a href="#" class="nav-link active" data-page="chat">Chat</a>
+          <a href="#" class="nav-link" data-page="status">Estado</a>
+          <a href="#" class="nav-link nav-link--external" data-page="admin">Panel admin</a>
+        </nav>
+      </header>
+
+      <main id="chatView" class="chat-container">
+        <div id="messages" class="messages">
+        </div>
+
+        <form id="form" class="input-area" autocomplete="off">
+          <div class="input-wrapper">
+            <textarea
+              id="input"
+              name="message"
+              placeholder="Escribí tu consulta..."
+              rows="1"
+            ></textarea>
+            <button type="submit" id="send" aria-label="Enviar">
+              <span class="btn-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/></svg>
+              </span>
+            </button>
+          </div>
+        </form>
+      </main>
+
+      <section id="statusView" class="page-view" style="display: none;" aria-hidden="true">
+        <div class="page-view-inner">
+          <h2 class="page-title">Estado del servidor</h2>
+          <pre id="statusContent" class="status-pre">Cargando…</pre>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
