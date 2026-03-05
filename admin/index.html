@@ -461,7 +461,8 @@
     </div>
 
     <script>
-      const API_BASE = (window.location.port === "3001" ? "" : "http://localhost:3001");
+      // En hosting o cuando el admin se abre desde el backend (puerto 3001), usar la misma URL. Solo en dev con Vite (otro puerto) apuntar al backend.
+      const API_BASE = (window.location.port === "3001" || window.location.hostname !== "localhost") ? "" : "http://localhost:3001";
       const $ = (id) => document.getElementById(id);
       let chatUrl = (window.location.port === "3001")
         ? (window.location.protocol + "//" + window.location.hostname + ":5173/")

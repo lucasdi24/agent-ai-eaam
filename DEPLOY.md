@@ -74,6 +74,7 @@ Si algo no anda, revisá los logs del servicio en Railway o Render; ahí aparece
 
 2. **Configuración de compilación:**
    - **Directorio raíz:** `./` (o vacío).
+   - **Directorio de salida (Output Directory):** `dist` — obligatorio para que Hostinger reconozca el frontend compilado.
    - **Comando de build:** `npm install && npm run build`
    - **Comando de inicio (Start):** `npm start`
    - **Versión de Node:** 18.x o 22.x (el proyecto usa `engines.node >= 18`).
